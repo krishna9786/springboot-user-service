@@ -63,10 +63,11 @@ jobs:
             mkdir -p ~/user-service
             cd ~/user-service
             
-            # The [j]ar trick prevents pkill from matching this script's own text
+            # Safely shut down any previous application run
             pkill -f 'java -jar.*[j]ar' || true
             
-            # Launch completely detached from the TTY session
-            nohup java -jar *.jar > app.log 2>&1 &
+            # setsid runs the program in a completely fresh, detached Linux session context
+            # We redirect stdin (< /dev/null) to ensure the runner doesn't hang waiting for input
+            setsid java -jar *.jar > app.log 2>&1 < /dev/null &
             
-            echo "Deployment successfully initialized!"
+            echo "Deployment successfully completed!"
