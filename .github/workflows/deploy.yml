@@ -60,14 +60,10 @@ jobs:
           username: ${{ secrets.EC2_USERNAME }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
-            mkdir -p ~/user-service
-            cd ~/user-service
+            # Rename the uploaded jar to match our service configuration name exactly
+            mv ~/user-service/*.jar ~/user-service/springboot-user-service.jar
             
-            # Stop any older application run safely
-            pkill -f 'java -jar.*[j]ar' || true
+            # Restart the system service safely
+            sudo systemctl restart user-service
             
-            # Execute inside an independent subshell that explicitly exits immediately
-            # after spawning the detached process, dropping the TTY association
-            (nohup java -jar *.jar > app.log 2>&1 < /dev/null &)
-            
-            echo "Deployment successfully executed!"
+            echo "Deployment successfully finished via systemd!"
