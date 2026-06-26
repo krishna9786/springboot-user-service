@@ -63,11 +63,11 @@ jobs:
             mkdir -p ~/user-service
             cd ~/user-service
             
-            # Safely shut down any previous application run
+            # Stop any older application run safely
             pkill -f 'java -jar.*[j]ar' || true
             
-            # setsid runs the program in a completely fresh, detached Linux session context
-            # We redirect stdin (< /dev/null) to ensure the runner doesn't hang waiting for input
-            setsid java -jar *.jar > app.log 2>&1 < /dev/null &
+            # Execute inside an independent subshell that explicitly exits immediately
+            # after spawning the detached process, dropping the TTY association
+            (nohup java -jar *.jar > app.log 2>&1 < /dev/null &)
             
-            echo "Deployment successfully completed!"
+            echo "Deployment successfully executed!"
