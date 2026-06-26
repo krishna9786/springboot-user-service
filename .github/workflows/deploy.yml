@@ -63,12 +63,14 @@ jobs:
             mkdir -p ~/user-service
             cd ~/user-service
             
-            # Target only background java instances running your specific jar file
+            # Safely shut down any old running instances
+            pkill -f 'springboot-user-service.*.jar' || true
             pkill -f 'java -jar.*.jar' || true
             
-            # Run the new JAR cleanly in the background
+            # Start the new application completely detached
             nohup java -jar *.jar > app.log 2>&1 &
             
-            # Give the application a brief moment to boot safely
-            sleep 3
-            echo "Deployment completed successfully!"
+            # Detach the background process from the session
+            disown
+            
+            echo "Deployment triggered successfully!"
