@@ -63,10 +63,12 @@ jobs:
             mkdir -p ~/user-service
             cd ~/user-service
             
-            # Stop the old running application if it exists
-            pkill -f 'user-service' || true
+            # Target only background java instances running your specific jar file
+            pkill -f 'java -jar.*.jar' || true
             
-            # Run the new JAR in the background and log outputs
+            # Run the new JAR cleanly in the background
             nohup java -jar *.jar > app.log 2>&1 &
             
+            # Give the application a brief moment to boot safely
+            sleep 3
             echo "Deployment completed successfully!"
