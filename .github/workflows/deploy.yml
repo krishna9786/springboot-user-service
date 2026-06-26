@@ -21,6 +21,11 @@ jobs:
           cache: maven
 
       - name: Build and Test with Maven
+        # We pass fake DB properties here so the Spring Context can load during testing
+        env:
+          DB_URL: jdbc:mysql://localhost:3306/testdb
+          DB_USERNAME: root
+          DB_PASSWORD: password
         run: mvn clean package -DskipTests=false
 
   deploy:
@@ -40,6 +45,4 @@ jobs:
           script: |
             mkdir -p ~/user-service
             cd ~/user-service
-            
-            # Temporary echo to test connection before moving files
             echo "Successfully connected to EC2 from GitHub Actions!"
