@@ -63,14 +63,10 @@ jobs:
             mkdir -p ~/user-service
             cd ~/user-service
             
-            # Safely shut down any old running instances
-            pkill -f 'springboot-user-service.*.jar' || true
-            pkill -f 'java -jar.*.jar' || true
+            # The [j]ar trick prevents pkill from matching this script's own text
+            pkill -f 'java -jar.*[j]ar' || true
             
-            # Start the new application completely detached
+            # Launch completely detached from the TTY session
             nohup java -jar *.jar > app.log 2>&1 &
             
-            # Detach the background process from the session
-            disown
-            
-            echo "Deployment triggered successfully!"
+            echo "Deployment successfully initialized!"
