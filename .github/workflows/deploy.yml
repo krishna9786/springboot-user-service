@@ -21,8 +21,13 @@ jobs:
           cache: maven
 
       - name: Build and Package with Maven
-        # Changing skipTests to true allows Maven to package your jar without needing a live database connection
         run: mvn clean package -DskipTests=true
+
+      - name: Upload Build Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: springboot-app
+          path: target/*.jar
 
   deploy:
     needs: build-and-test
@@ -32,7 +37,23 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v4
 
-      - name: Deploy to EC2 via SSH
+      - name: Download Build Artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: springboot-app
+          path: target/
+
+      - name: Copy JAR File to EC2 via SCP
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USERNAME }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          source: "target/*.jar"
+          target: "~/user-service"
+          strip_components: 1
+
+      - name: Deploy and Run on EC2 via SSH
         uses: appleboy/ssh-action@v1.0.3
         with:
           host: ${{ secrets.EC2_HOST }}
@@ -41,4 +62,11 @@ jobs:
           script: |
             mkdir -p ~/user-service
             cd ~/user-service
-            echo "Successfully connected to EC2 from GitHub Actions!"
+            
+            # Stop the old running application if it exists
+            pkill -f 'user-service' || true
+            
+            # Run the new JAR in the background and log outputs
+            nohup java -jar *.jar > app.log 2>&1 &
+            
+            echo "Deployment completed successfully!"
