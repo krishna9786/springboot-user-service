@@ -158,13 +158,13 @@ java -jar target/user-service-0.0.1-SNAPSHOT.jar
 Swagger UI:
 
 ```text
-[http://<EC2-IP>:8080/swagger-ui/index.html](http://13.51.169.147:8080/swagger-ui/index.html)
+http://13.51.169.147:8080/swagger-ui/index.html
 ```
 
 OpenAPI Docs:
 
 ```text
-[http://<EC2-IP>:8080/v3/api-docs](http://13.51.169.147:8080/v3/api-docs)
+http://13.51.169.147:8080/v3/api-docs
 ```
 
 ---
