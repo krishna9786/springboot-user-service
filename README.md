@@ -182,8 +182,9 @@ GitHub Actions automatically:
 ---
 
 ## Author
-
-Krishna
-
+```bash
 GitHub: https://github.com/krishna9786
+```
+```bash
 LinkedIn: www.linkedin.com/in/krishna9786
+```
